@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/chartwave/chartwave/pkg/action"
 	logSetup "github.com/chartwave/chartwave/pkg/log"
 	chartwave "github.com/chartwave/chartwave/pkg/version"
 	log "github.com/sirupsen/logrus"
@@ -12,6 +13,7 @@ import (
 
 //nolint:gochecknoglobals // we need global list of commands
 var commands = []*cli.Command{
+	new(action.Deploy).Cmd(),
 	version(),
 	completion(),
 }
