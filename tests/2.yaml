@@ -1,0 +1,19 @@
+# $secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: test123
+  # annotations:
+  # name: $deployment.metadata.annotations."app/name"
+type: Opaque
+data: {}
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: test321
+  annotations:
+    name: $secret.metadata.annotations.name
+type: Opaque
+data: {}

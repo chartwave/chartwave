@@ -1,0 +1,10 @@
+# $blabla
+apiVersion: v1
+kind: Secret
+metadata:
+  name: test123
+  annotations:
+    name: $deployment.metadata.annotations."app/name"
+type: Opaque
+data:
+  abc: "123"
