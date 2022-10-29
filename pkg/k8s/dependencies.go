@@ -16,7 +16,7 @@ type Manifest struct {
 	Name string
 	Data map[string]interface{}
 
-	dependencies []Dependency
+	Dependencies []Dependency
 }
 
 type Dependency struct {
@@ -57,7 +57,7 @@ func (m *Manifest) UnmarshalYAML(value *yaml.Node) error {
 }
 
 func (m *Manifest) buildDependencies() {
-	m.dependencies = m.getDependencies()
+	m.Dependencies = m.getDependencies()
 }
 
 func (m *Manifest) getDependencies() []Dependency {

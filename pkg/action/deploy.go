@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/chartwave/chartwave/pkg/k8s"
-	"github.com/davecgh/go-spew/spew"
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
@@ -20,12 +20,14 @@ func (i *Deploy) Run(ctx context.Context) error {
 	}
 	defer f.Close()
 
-	manifest, err := k8s.UnmarshalYAML(f)
+	manifests, err := k8s.UnmarshalYAML(f)
 	if err != nil {
 		return err
 	}
 
-	spew.Dump(manifest)
+	for _, manifest := range manifests {
+		log.WithField("manifest", manifest.Name).WithField("dependencies", manifest.Dependencies).Info("detected resource dependencies")
+	}
 
 	return nil
 }
