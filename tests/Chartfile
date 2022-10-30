@@ -5,11 +5,10 @@ METADATA home=https://dev.null
 METADATA appVersion=0.1.0
 ADD templates/ .
 
-FROM bitnami/support as helpers
-
 ###
-FROM bitnami/nginx:13.2.11
+FROM bitnami/nginx:13.2.12
 
-REMOVE deployment.yaml
-ADD templates/deployment-fixed.yaml .
-ADD --from=helpers helper.yaml .
+REMOVE templates/deployment.yaml
+REMOVE templates/NOTES.txt
+ADD templates/deployment-fixed.yaml templates/
+ADD --from=helpers helper.yaml templates/

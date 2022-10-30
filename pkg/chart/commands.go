@@ -1,7 +1,9 @@
-package builder
+package chart
 
 import (
 	"fmt"
+	"os"
+	"path"
 	"strings"
 
 	"github.com/moby/buildkit/frontend/dockerfile/parser"
@@ -40,6 +42,7 @@ func (command *MetadataCommand) Parse(n *parser.Node) error {
 }
 
 type AddCommand struct {
+	From     string
 	Src, Dst string
 }
 
@@ -47,13 +50,21 @@ func (AddCommand) Name() string {
 	return "ADD"
 }
 
-func (AddCommand) Run(string) error {
+func (command *AddCommand) Run(string) error {
+	if command.From != "" {
+		return fmt.Errorf("--from is not supported yet")
+	}
 	return nil
 }
 
 func (command *AddCommand) Parse(n *parser.Node) error {
 	if n.Next == nil || n.Next.Next == nil {
 		return fmt.Errorf("failed to parse %q command: two arguments required - src and dst", command.Name())
+	}
+	for _, flag := range n.Flags {
+		if strings.HasPrefix(flag, "--from=") {
+			command.From = strings.TrimPrefix(flag, "--from=")
+		}
 	}
 
 	command.Src = n.Next.Value
@@ -70,7 +81,12 @@ func (RemoveCommand) Name() string {
 	return "REMOVE"
 }
 
-func (RemoveCommand) Run(string) error {
+func (command *RemoveCommand) Run(basePath string) error {
+	err := os.Remove(path.Join(basePath, command.Path))
+	if err != nil {
+		return fmt.Errorf("failed to remove file: %w", err)
+	}
+
 	return nil
 }
 

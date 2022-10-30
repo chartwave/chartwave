@@ -1,4 +1,4 @@
-package builder
+package chart
 
 import (
 	"fmt"
@@ -8,23 +8,13 @@ import (
 	"github.com/moby/buildkit/frontend/dockerfile/parser"
 )
 
-type Chartfile struct {
-	Targets map[string]*ChartTarget
-}
-
-type ChartTarget struct {
-	Base     string
-	Alias    string
-	Commands []ChartCommand
-}
-
-func ParseChartfile(input io.Reader) (*Chartfile, error) {
+func ParseChartfile(input io.Reader) (*Chart, error) {
 	mobyAST, err := parser.Parse(input)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse Chartfile into AST: %w", err)
 	}
 
-	result := &Chartfile{
+	result := &Chart{
 		Targets: make(map[string]*ChartTarget),
 	}
 	var target *ChartTarget

@@ -4,8 +4,7 @@ import (
 	"context"
 	"os"
 
-	"github.com/chartwave/chartwave/pkg/chart/builder"
-	"github.com/davecgh/go-spew/spew"
+	"github.com/chartwave/chartwave/pkg/chart"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -21,12 +20,17 @@ func (i *Build) Run(ctx context.Context) error {
 	}
 	defer f.Close()
 
-	chartfile, err := builder.ParseChartfile(f)
+	chart, err := chart.ParseChartfile(f)
 	if err != nil {
 		log.WithError(err).Error("failed to parse chartfile")
 		return err
 	}
-	spew.Dump(chartfile)
+
+	err = chart.Build("dist")
+	if err != nil {
+		log.WithError(err).Error("failed to build chart")
+		return err
+	}
 
 	return nil
 }
