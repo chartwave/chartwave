@@ -34,5 +34,6 @@ func (command *RemoveCommand) Parse(n *parser.Node) error {
 	}
 	command.Path = s
 
+	// TODO: validate to prohibit going outside tmpDir via `/blalba` or `../../../`
 	return nil
 }

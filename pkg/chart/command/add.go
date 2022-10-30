@@ -105,5 +105,6 @@ func (command *AddCommand) Parse(n *parser.Node) error {
 	command.Src = n.Next.Value
 	command.Dst = n.Next.Next.Value
 
+	// TODO: validate to prohibit going outside tmpDir via `/blalba` or `../../../`
 	return nil
 }
