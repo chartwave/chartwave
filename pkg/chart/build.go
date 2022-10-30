@@ -28,22 +28,31 @@ func (c *Chart) Build(dstDir string) error {
 		if err != nil {
 			return err
 		}
-		defer func(path string) {
-			err := os.RemoveAll(path)
-			if err != nil {
-				log.WithError(err).WithField("path", path).Error("failed to clean up temporary directory")
-			}
-		}(tmp)
+		// defer func(path string) {
+		// 	err := os.RemoveAll(path)
+		// 	if err != nil {
+		// 		log.WithError(err).WithField("path", path).Error("failed to clean up temporary directory")
+		// 	}
+		// }(tmp)
 
 		tmpPaths[name] = tmp
 	}
 
-	// TODO: add support for target dependencies
-	for name, target := range c.Targets {
-		err := target.Build(tmpPaths[name])
+	depGraph, err := c.buildDependenciesGraph()
+	if err != nil {
+		return err
+	}
+
+	targets := depGraph.Run()
+	for target := range targets {
+		name := target.Data.Alias
+		err := target.Data.Build(tmpPaths[name], tmpPaths)
 		if err != nil {
+			target.SetFailed()
 			return err
 		}
+
+		target.SetSucceeded()
 	}
 
 	tmpPath := tmpPaths[""]
@@ -58,7 +67,7 @@ func (c *Chart) Build(dstDir string) error {
 	return nil
 }
 
-func (t *ChartTarget) Build(basePath string) error {
+func (t *ChartTarget) Build(basePath string, allPaths map[string]string) error {
 	l := log.WithField("target", t.Alias)
 	l.WithField("path", basePath).Debug("starting building target")
 
@@ -68,7 +77,7 @@ func (t *ChartTarget) Build(basePath string) error {
 	}
 
 	for _, command := range t.Commands {
-		err = command.Run(basePath)
+		err = command.Run(basePath, allPaths)
 		if err != nil {
 			return fmt.Errorf("failed to run %q command: %w", command.Name(), err)
 		}
@@ -79,6 +88,11 @@ func (t *ChartTarget) Build(basePath string) error {
 
 func (t *ChartTarget) downloadBase(basePath string) error {
 	if t.Base == "scratch" {
+		err := os.Mkdir(path.Join(basePath, "templates"), 0o755)
+		if err != nil {
+			return fmt.Errorf("failed to create templates dir in scratch: %w", err)
+		}
+
 		return nil
 	}
 

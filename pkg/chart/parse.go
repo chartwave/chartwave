@@ -5,6 +5,7 @@ import (
 	"io"
 	"strings"
 
+	"github.com/chartwave/chartwave/pkg/chart/command"
 	"github.com/moby/buildkit/frontend/dockerfile/parser"
 )
 
@@ -45,33 +46,33 @@ func ParseChartfile(input io.Reader) (*Chart, error) {
 			}
 
 			result.Targets[alias] = target
-		case MetadataCommand{}.Name():
+		case command.MetadataCommand{}.Name():
 			if target == nil {
 				return nil, fmt.Errorf("failed to parse Chartfile: cannot use command %q outside of target", n.Value)
 			}
-			command := &MetadataCommand{}
+			command := &command.MetadataCommand{}
 			err := command.Parse(n)
 			if err != nil {
 				return nil, err
 			}
 
 			target.Commands = append(target.Commands, command)
-		case AddCommand{}.Name():
+		case command.AddCommand{}.Name():
 			if target == nil {
 				return nil, fmt.Errorf("failed to parse Chartfile: cannot use command %q outside of target", n.Value)
 			}
-			command := &AddCommand{}
+			command := &command.AddCommand{}
 			err := command.Parse(n)
 			if err != nil {
 				return nil, err
 			}
 
 			target.Commands = append(target.Commands, command)
-		case RemoveCommand{}.Name():
+		case command.RemoveCommand{}.Name():
 			if target == nil {
 				return nil, fmt.Errorf("failed to parse Chartfile: cannot use command %q outside of target", n.Value)
 			}
-			command := &RemoveCommand{}
+			command := &command.RemoveCommand{}
 			err := command.Parse(n)
 			if err != nil {
 				return nil, err

@@ -3,12 +3,11 @@ FROM scratch AS base
 METADATA keywords=blabla,bla2
 METADATA home=https://dev.null
 METADATA appVersion=0.1.0
-ADD templates/ .
+ADD go.mod templates/
 
 ###
 FROM bitnami/nginx:13.2.12
 
 REMOVE templates/deployment.yaml
 REMOVE templates/NOTES.txt
-ADD templates/deployment-fixed.yaml templates/
-ADD --from=helpers helper.yaml templates/
+ADD --from=base templates/go.mod templates/
