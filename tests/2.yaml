@@ -1,12 +1,17 @@
-# $secret
+{{ $ebala-1 := .Manifests["ebala-1"] }}
+
+{{ range $key := blabla }}
 apiVersion: v1
 kind: Secret
 metadata:
   name: test123
-  # annotations:
-  # name: $deployment.metadata.annotations."app/name"
+  annotations:
+    chartwave.dev/unique-name: "ebala-{{ $key }}"
+    name: $deployment.metadata.annotations."app/name"
+    instance: blablalba
 type: Opaque
 data: {}
+{{ end }}
 
 ---
 apiVersion: v1
@@ -14,6 +19,6 @@ kind: Secret
 metadata:
   name: test321
   annotations:
-    name: $secret.metadata.annotations.name
+    blabla: [[ $ebala-1.metadata.annotations | quote ]]
 type: Opaque
 data: {}
