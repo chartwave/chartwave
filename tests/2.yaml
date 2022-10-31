@@ -7,7 +7,11 @@ metadata:
   name: test123
   annotations:
     chartwave.dev/unique-name: "ebala-{{ $key }}"
-    name: $deployment.metadata.annotations."app/name"
+    
+    my-name: {{ get (.Manifest["ebala"]).annotations.name }}
+    chartwave.dev/needs: {{ get (.Manifest["ebala"]).annotations.name, "configma", "" }}
+    
+    #name: $deployment.metadata.annotations."app/name"
     instance: blablalba
 type: Opaque
 data: {}
