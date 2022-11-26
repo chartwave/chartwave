@@ -6,13 +6,8 @@ kind: Secret
 metadata:
   name: test123
   annotations:
-    chartwave.dev/unique-name: "ebala-{{ $key }}"
-    
-    my-name: {{ get (.Manifest["ebala"]).annotations.name }}
-    chartwave.dev/needs: {{ get (.Manifest["ebala"]).annotations.name, "configma", "" }}
-    
-    #name: $deployment.metadata.annotations."app/name"
-    instance: blablalba
+    chartwave.app/needs: {{ get (.Manifest["ebala"]).annotations.name, "configmap", "" }}
+    chartwave.app/unique-name: "ebala-{{ $key }}"
 type: Opaque
 data: {}
 {{ end }}
@@ -23,6 +18,6 @@ kind: Secret
 metadata:
   name: test321
   annotations:
-    blabla: [[ $ebala-1.metadata.annotations | quote ]]
+    blabla: {{ get (.Manifest["ebala-1"].metadata.annotations | quote }}
 type: Opaque
 data: {}

@@ -7,6 +7,7 @@ import (
 )
 
 type Chart struct {
+	Path    string
 	Targets map[string]*ChartTarget
 }
 
